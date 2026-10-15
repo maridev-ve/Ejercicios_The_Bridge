@@ -122,6 +122,7 @@ function fetchGithubUsers(userNames) {
       res.json(),
     ); // Convertimos cada respuesta a JSON directamente
   });
+  
 
   // Paso 2: Usar Promise.all() para resolver todas las peticiones a la vez
   return Promise.all(promesasFetch)
