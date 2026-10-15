@@ -1,8 +1,7 @@
 
-//devuelva un array de strings con todas las razas de perro.
+
 function getAllBreeds() {
-    //https://dog.ceo/api/breeds/list/all
-    const url = "api_dog.json"
+    const url = "https://dog.ceo/api/breeds/list/all"
     return fetch(url)
         .then(res => res.json())
         .then(data => Object.keys(data.message))
@@ -13,11 +12,10 @@ function getAllBreeds() {
 //getAllBreeds().then(rrazas => console.log(rrazas));
 
 /***************************** EJERCICIO 2***************************************/
-//que obtenga una imagen random de una raza
+
 
 function getRandomDog() {
-    //https://dog.ceo/api/breeds/image/random
-    const url = "api_imgDog.json";
+    const url = "https://dog.ceo/api/breeds/image/random";
     return fetch(url)
         .then(res => res.json())
         .then(data => data.message)
@@ -25,15 +23,13 @@ function getRandomDog() {
             console.error("Error fetching data from fakestoreapi:", error);
         });
 };
-//getRandomDog().then(imagen => console.log(imagen));
+getRandomDog().then(imagen => console.log(imagen));
 
 
 /***************************** EJERCICIO 3***************************************/
-//obtenga todas las imágenes de la raza komondor.
 
-//https://dog.ceo/api/breed/hound/images
 function getAllImagesByBreed() {
-    const url = "komondor.json"
+    const url = "https://dog.ceo/api/breed/komondor/images"
     return fetch(url)
         .then(res => res.json())
         .then(data => data.message)
@@ -41,15 +37,13 @@ function getAllImagesByBreed() {
             console.error("Error fetching data from fakestoreapi:", error);
         });
 }
-//getAllImagesByBreed().then(imagenes => console.log(imagenes));
+getAllImagesByBreed().then(imagenes => console.log(imagenes));
 
 
 /***************************** EJERCICIO 4 ***************************************/
-//que devuelva las imágenes de la raza pasada por el argumento
-//`https://dog.ceo/api/breed/${breed}/images`
 
 function getAllImagesByBreed2(breed) {
-    const url = `${breed}.json`
+    const url = `https://dog.ceo/api/breed/${breed}/images`
     return fetch(url)
         .then(resultado => resultado.json())
         .then(raza => raza.message)
@@ -57,49 +51,45 @@ function getAllImagesByBreed2(breed) {
             console.error("Error fetching data from fakestoreapi:", error);
         });
 }
-//getAllImagesByBreed2("komondor").then( imagenes => console.log(imagenes))
+getAllImagesByBreed2("komondor").then( imagenes => console.log(imagenes))
 
 
 /***************************** EJERCICIO 5 ***************************************/
-// que obtenga el perfil de usuario de github a partir de su nombre de usuario
-// `https://api.github.com/users/${username}`
+
 function getGitHubUserProfile(username) {
-    const url = `${username}.json`
+    const url = `https://api.github.com/users/${username}`
     return fetch(url)
         .then(res => res.json())
         .catch((error) => {
             console.error("Error fetching data from fakestoreapi:", error);
         });
 }
-//getGitHubUserProfile('alenriquez96').then( userGithub => console.log(userGithub))
+getGitHubUserProfile('alenriquez96').then( userGithub => console.log(userGithub))
 
 
 /***************************** EJERCICIO 6 ***************************************/
-//que reciba como argumento el nombre de un usuario (username),
-// retorne {img, name} y pinte la foto y el nombre en el DOM.
-// `https://api.github.com/users/${username}`
+
 function printGithubUserProfile(username) {
-    const url = `${username}.json`
+    const url = `https://api.github.com/users/${username}`
     return fetch(url)
         .then(res => res.json())
-        .then(user => { user.name, user.img })
+        .then(user => ({ name: user.name, img: user.avatar_url }))
         .catch((error) => {
             console.error("Error fetching data from fakestoreapi:", error);
         });
 }
-//getGitHubUserProfile('alenriquez96').then( user => console.log(user))
+getGitHubUserProfile('alenriquez96').then( user => console.log(user))
 
 
 /***************************** EJERCICIO 7 ***************************************/
-//que contenga una petición a la API para obtener información de ese usuario y devuelva 
-// un string que represente una tarjeta HTML como en el ejemplo, la estructura 
-// debe ser exactamente la misma:
+
+const section = document.getElementById("card")
 function getAndPrintGitHubUserProfile(username) {
-    const url = `${username}.json`
+    const url = `https://api.github.com/users/${username}`
     return fetch(url)
         .then(res => res.json())
         .then(user => (`<section>
-    <img src="${user.img} "alt=${user.alt}>
+    <img src="${user.avatar_url}" alt="${user.name}">
     <h1>${user.name}</h1>
     <p>Public repos: ${user.public_repos}</p>
 </section>`))
@@ -107,13 +97,46 @@ function getAndPrintGitHubUserProfile(username) {
             console.error("Error fetching data from fakestoreapi:", error);
         });
 }
-etAndPrintGitHubUserProfile('alenriquez96').then(card => console.log(card))
+getAndPrintGitHubUserProfile('alenriquez96').then(card => section.innerHTML += card)
 
 
 /***************************** EJERCICIO 8 ***************************************/
 
+const input = document.getElementById("input")
+const button = document.getElementById("button")
 
+button.addEventListener("click", () => {
+    getAndPrintGitHubUserProfile(input.value).then(card => section.innerHTML = card);
+
+})
 
 
 /***************************** EJERCICIO 9 ***************************************/
+// Ejemplo de ARRAY de usuarios para probarlo:
+const listaUsuarios = ["octocat", "alenoir", "midudev"];
 
+function fetchGithubUsers(userNames) {
+  // Paso 1: Mapear el array para hacer un fetch por cada usuario (obtenemos un array de promesas)
+  const promesasFetch = userNames.map((name) => {
+    return fetch(`https://api.github.com/users/${name}`).then((res) =>
+      res.json(),
+    ); // Convertimos cada respuesta a JSON directamente
+  });
+
+  // Paso 2: Usar Promise.all() para resolver todas las peticiones a la vez
+  return Promise.all(promesasFetch)
+    .then((usersData) => {
+      // Paso 3: Cuando Promise.all() termina, recorremos los resultados
+      usersData.forEach((user) => {
+        // Imprimir por consola la URL del repositorio de cada usuario
+        console.log("URL del repositorio:", user.html_url);
+
+        // Imprimir por consola el nombre de cada usuario
+        console.log("Nombre del usuario:", user.name || user.login);
+      });
+      return usersData;
+    })
+    .catch((error) => console.error("Error en las peticiones:", error));
+}
+
+fetchGithubUsers(listaUsuarios);
