@@ -126,18 +126,18 @@ function fetchGithubUsers(userNames) {
 
   // Paso 2: Usar Promise.all() para resolver todas las peticiones a la vez
   return Promise.all(promesasFetch)
-    .then((usersData) => {
-      // Paso 3: Cuando Promise.all() termina, recorremos los resultados
-      usersData.forEach((user) => {
-        // Imprimir por consola la URL del repositorio de cada usuario
-        console.log("URL del repositorio:", user.html_url);
+        .then((usersData) => {
+                // Paso 3: Cuando Promise.all() termina, recorremos los resultados
+            usersData.forEach((user) => {
+                // Imprimir por consola la URL del repositorio de cada usuario
+                console.log("URL del repositorio:", user.html_url);
 
-        // Imprimir por consola el nombre de cada usuario
-        console.log("Nombre del usuario:", user.name || user.login);
-      });
-      return usersData;
-    })
+                // Imprimir por consola el nombre de cada usuario
+                console.log("Nombre del usuario:", user.name || user.login);
+            });
+            return usersData;
+        })
     .catch((error) => console.error("Error en las peticiones:", error));
 }
 
-fetchGithubUsers(listaUsuarios);
+fetchGithubUsers(listaUsuarios).then( datos => console.log(datos));
