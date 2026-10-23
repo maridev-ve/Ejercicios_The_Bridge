@@ -1,5 +1,5 @@
 const mapId = 'map';
-const initialCoordinates = [39.5694, 2.6502]; //Mallorca palma
+const initialCoordinates = [0.0, 0.0]; //Mallorca palma
 const map = L.map(mapId).setView(initialCoordinates, 1);
 
 const MAPBOX_API = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}'
@@ -26,9 +26,9 @@ L.marker(initialCoordinates).bindPopup("<b>Palma de Mallorca</b><br>Posición in
 
 //LLAMADA A LA API DE TERREMOTOS
 async function getEarthquakeToday() {
-    // const EARTHQUAKETODAY_API = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+    const EARTHQUAKETODAY_API = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
     try {
-        const response = await fetch("ApiTerremoto.json");
+        const response = await fetch(EARTHQUAKETODAY_API);
         const res = await response.json();
         const dataCooPosition = res.features;//retorna los terremotos de hoy
 
@@ -65,11 +65,11 @@ function paintEarthquake(datas, mapa) {
             const { code, mag, magType, place, time, title } = element.properties;
 
             const popupContent = `<b>${title}</b><br>
-                                ${place}<br>
-                                ${new Date(time).toLocaleString()}<br>
-                                <b>Code:</b> ${code}<br>
-                                <b>Magnitud:</b> ${mag}<br>
-                                <b>Tipo de Magnitud:</b> ${magType}`;
+            ${place}<br>
+            ${new Date(time).toLocaleString()}<br>
+            <b>Code:</b> ${code}<br>
+            <b>Magnitud:</b> ${mag}<br>
+            <b>Tipo de Magnitud:</b> ${magType}`;
 
             L.marker([latitud, longitud]).bindPopup(popupContent).addTo(mapa);
         });
@@ -88,30 +88,35 @@ const form = document.getElementById("filter-form");
 const inputMagnitude = document.getElementById("magnitude")
 const outputMagnitud = document.getElementById("outputMagnitud")
 
+const loader = document.getElementById("loader")
 
 const mapId2 = 'map-filtered';
 const map2 = L.map(mapId2).setView(initialCoordinates, 1);
+console.log(map2);
+
 const earthquakesGroup = L.layerGroup().addTo(map2);
 
 L.tileLayer(MAPBOX_API, {
     attribution: ATTRIBUTION,
-    maxZoom: 13, 
+    maxZoom: 13,
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
     accessToken: ACCESS_TOKEN
 }).addTo(map2);
 
-form.addEventListener( "submit", e => {
+form.addEventListener("submit", e => {
     e.preventDefault();
     earthquakesGroup.clearLayers();
-    const {magnitude, startDate,endDate} = form.elements;
-    
-    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => paintEarthquake(dataArr, earthquakesGroup))
-    
+    const { magnitude, startDate, endDate } = form.elements;
+
+    loader.classList.remove("oculto")
+
+    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => { paintEarthquake(dataArr, earthquakesGroup); loader.classList.add("oculto") })
+
 });
 
-inputMagnitude.addEventListener( "input", e => {
+inputMagnitude.addEventListener("input", e => {
     outputMagnitud.textContent = inputMagnitude.value
-} )
+})
 

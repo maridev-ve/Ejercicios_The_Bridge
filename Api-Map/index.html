@@ -25,10 +25,10 @@
                 <output for="magnitude" id="outputMagnitud">0</output> 
 
                 <label for="startDate">Fecha de inicio</label>
-                <input type="date" name="startDate" id="startDate">
+                <input type="date" name="startDate" id="startDate" required>
 
                 <label for="endDate">Fecha final</label>
-                <input type="date" name="endDate" id="endDate">
+                <input type="date" name="endDate" id="endDate" required>
 
                 <button type="submit">Filtrar</button>
             </form>
@@ -42,8 +42,10 @@
 
         <section>
             <h2>Resultados filtrados</h2>
+            <div id="loader" class="oculto">
+                <p>cargando...</p>
+            </div>
             <div id="map-filtered" class="map"></div>
-            <div id="loader" class="loader"></div>
         </section>
     </main>
 
