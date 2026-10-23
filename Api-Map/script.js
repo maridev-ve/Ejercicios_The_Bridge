@@ -86,6 +86,7 @@ getEarthquakeToday().then(dataArr => paintEarthquake(dataArr, map));
 const form = document.getElementById("filter-form");
 const mapId2 = 'map-filtered';
 const map2 = L.map(mapId2).setView(initialCoordinates, 1);
+const earthquakesGroup = L.layerGroup().addTo(map2);
 
 L.tileLayer(MAPBOX_API, {
     attribution: ATTRIBUTION,
@@ -97,9 +98,9 @@ L.tileLayer(MAPBOX_API, {
 }).addTo(map2);
 
 form.addEventListener( "submit", e => {
-    e.preventDefault()
-    const {magnitude, startDate,endDate} = form.elements
+    e.preventDefault();
+    earthquakesGroup.clearLayers();
+    const {magnitude, startDate,endDate} = form.elements;
+    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => paintEarthquake(dataArr, earthquakesGroup))
     
 });
-
-getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => paintEarthquake(dataArr, map2))
