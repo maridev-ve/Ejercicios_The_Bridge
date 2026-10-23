@@ -1,6 +1,6 @@
 const mapId = 'map';
 const initialCoordinates = [39.5694, 2.6502]; //Mallorca palma
-const map = L.map(mapId).setView(initialCoordinates, 13);
+const map = L.map(mapId).setView(initialCoordinates, 1);
 
 const MAPBOX_API = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}'
 
@@ -12,7 +12,7 @@ const ACCESS_TOKEN =
 
 L.tileLayer(MAPBOX_API, {
     attribution: ATTRIBUTION,
-    maxZoom: 1,
+    maxZoom: 13,
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
@@ -41,7 +41,7 @@ async function getEarthquakeToday() {
 }
 
 async function getEarthquakeFilter(starttime, endtime, minmagnitude) {
-    const FilterApi = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${starttime}&endtime=${endtime}&minmagnitude=${minmagnitude}`
+    const FilterApi = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${starttime}&endtime=${endtime}&minmagnitude=${minmagnitude}&limit=300&orderby=magnitude`
     try {
         const response = await fetch(FilterApi);
         const res = await response.json();
@@ -53,9 +53,9 @@ async function getEarthquakeFilter(starttime, endtime, minmagnitude) {
         console.error("Error al intentar", error);
         return []
 
-    }
+    };
 
-}
+};
 //getEarthquakeFilter("2026-01-01", "2026-01-31", 5).then(urlFecha => console.log(urlFecha))
 
 function paintEarthquake(datas, mapa) {
@@ -77,7 +77,29 @@ function paintEarthquake(datas, mapa) {
     catch (error) {
         console.log("error al intentar", error);
 
-    }
+    };
 
-}
-getEarthquakeToday().then(dataArr => paintEarthquake(dataArr, map))
+};
+getEarthquakeToday().then(dataArr => paintEarthquake(dataArr, map));
+
+//...................................... MAPA 2 ..................................................................
+const form = document.getElementById("filter-form");
+const mapId2 = 'map-filtered';
+const map2 = L.map(mapId2).setView(initialCoordinates, 1);
+
+L.tileLayer(MAPBOX_API, {
+    attribution: ATTRIBUTION,
+    maxZoom: 13, 
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: ACCESS_TOKEN
+}).addTo(map2);
+
+form.addEventListener( "submit", e => {
+    e.preventDefault()
+    const {magnitude, startDate,endDate} = form.elements
+    
+});
+
+getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => paintEarthquake(dataArr, map2))
