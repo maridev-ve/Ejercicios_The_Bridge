@@ -39,7 +39,7 @@ async function getEarthquakeToday() {
         return []
     }
 }
-
+//LLAMADA A LA API FILTRADA
 async function getEarthquakeFilter(starttime, endtime, minmagnitude) {
     const FilterApi = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${starttime}&endtime=${endtime}&minmagnitude=${minmagnitude}&limit=300&orderby=magnitude`
     try {
@@ -80,10 +80,15 @@ function paintEarthquake(datas, mapa) {
     };
 
 };
+
 getEarthquakeToday().then(dataArr => paintEarthquake(dataArr, map));
 
 //...................................... MAPA 2 ..................................................................
 const form = document.getElementById("filter-form");
+const inputMagnitude = document.getElementById("magnitude")
+const outputMagnitud = document.getElementById("outputMagnitud")
+
+
 const mapId2 = 'map-filtered';
 const map2 = L.map(mapId2).setView(initialCoordinates, 1);
 const earthquakesGroup = L.layerGroup().addTo(map2);
@@ -101,6 +106,12 @@ form.addEventListener( "submit", e => {
     e.preventDefault();
     earthquakesGroup.clearLayers();
     const {magnitude, startDate,endDate} = form.elements;
+    
     getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => paintEarthquake(dataArr, earthquakesGroup))
     
 });
+
+inputMagnitude.addEventListener( "input", e => {
+    outputMagnitud.textContent = inputMagnitude.value
+} )
+
