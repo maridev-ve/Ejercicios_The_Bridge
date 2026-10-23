@@ -22,12 +22,13 @@
             <form id="filter-form">
                 <label for="magnitude">Magnitud mínima</label>
                 <input type="range" name="magnitude" id="magnitude" min="0" max="7" step="0.5" value="0">
+                <output for="magnitude" id="outputMagnitud">0</output> 
 
                 <label for="startDate">Fecha de inicio</label>
-                <input type="date" name="startDate" id="startDate">
+                <input type="date" name="startDate" id="startDate" required>
 
                 <label for="endDate">Fecha final</label>
-                <input type="date" name="endDate" id="endDate">
+                <input type="date" name="endDate" id="endDate" required>
 
                 <button type="submit">Filtrar</button>
             </form>
@@ -39,27 +40,12 @@
             <div class="legend"></div>
         </section>
 
-
-        <search>
-            <h2>Filtro</h2>
-            <form id="filter-form">
-                <label for="magnitude">Magnitud mínima</label>
-                <input type="range" name="magnitude" id="magnitude" min="0" max="7" step="0.5" value="0">
-
-                <label for="startDate">Fecha de inicio</label>
-                <input type="date" name="startDate" id="startDate">
-
-                <label for="endDate">Fecha final</label>
-                <input type="date" name="endDate" id="endDate">
-
-                <button type="submit">Filtrar</button>
-            </form>
-        </search>
-
         <section>
             <h2>Resultados filtrados</h2>
+            <div id="loader" class="oculto">
+                <p>cargando...</p>
+            </div>
             <div id="map-filtered" class="map"></div>
-            <div id="loader" class="loader"></div>
         </section>
     </main>
 
