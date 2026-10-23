@@ -1,25 +1,76 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map</title>
-    <link rel="stylesheet" href="style.css"/>
-      
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
+    <title>Centro Sísmico</title>
 
-     <script src="script.js"></script>
-
-      <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <h1>Demo Mapas con </h1>
-     <div id="map"></div>
+    <header>
+        <h1>Centro Sísmico</h1>
+    </header>
+
+    <main>
+        <search>
+            <h2>Filtro</h2>
+            <form id="filter-form">
+                <label for="magnitude">Magnitud mínima</label>
+                <input type="range" name="magnitude" id="magnitude" min="0" max="7" step="0.5" value="0">
+
+                <label for="startDate">Fecha de inicio</label>
+                <input type="date" name="startDate" id="startDate">
+
+                <label for="endDate">Fecha final</label>
+                <input type="date" name="endDate" id="endDate">
+
+                <button type="submit">Filtrar</button>
+            </form>
+        </search>
+
+        <section>
+            <h2>Terremotos recientes</h2>
+            <div id="map" class="map"></div>
+            <div class="legend"></div>
+        </section>
+
+
+        <search>
+            <h2>Filtro</h2>
+            <form id="filter-form">
+                <label for="magnitude">Magnitud mínima</label>
+                <input type="range" name="magnitude" id="magnitude" min="0" max="7" step="0.5" value="0">
+
+                <label for="startDate">Fecha de inicio</label>
+                <input type="date" name="startDate" id="startDate">
+
+                <label for="endDate">Fecha final</label>
+                <input type="date" name="endDate" id="endDate">
+
+                <button type="submit">Filtrar</button>
+            </form>
+        </search>
+
+        <section>
+            <h2>Resultados filtrados</h2>
+            <div id="map-filtered" class="map"></div>
+            <div id="loader" class="loader"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Datos: USGS Earthquake Hazards Program</p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="">
+        </script>
+    <script src="script.js"></script>
 </body>
+
 </html>

@@ -63,8 +63,13 @@ function paintEarthquake(datas, mapa) {
         datas.forEach(element => {
             const [longitud, latitud] = element.geometry.coordinates;
             const { code, mag, magType, place, time, title } = element.properties;
-            const popupContent = `<b>${title}</b><br> ${place}<br> ${new Date(time).toLocaleString()}<br>
-                    <b>Code:</b> ${code}<br><b>Magnitud:</b> ${mag}<br><b>Tipo de Magnitud:</b> ${magType}`
+
+            const popupContent = `<b>${title}</b><br>
+                                ${place}<br>
+                                ${new Date(time).toLocaleString()}<br>
+                                <b>Code:</b> ${code}<br>
+                                <b>Magnitud:</b> ${mag}<br>
+                                <b>Tipo de Magnitud:</b> ${magType}`;
 
             L.marker([latitud, longitud]).bindPopup(popupContent).addTo(mapa);
         });
