@@ -1,5 +1,5 @@
 const mapId = 'map';
-const initialCoordinates = [0.0, 0.0]; //Mallorca palma
+const initialCoordinates = [0.0, 0.0];
 const map = L.map(mapId).setView(initialCoordinates, 1);
 
 const MAPBOX_API = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}'
@@ -18,10 +18,6 @@ L.tileLayer(MAPBOX_API, {
     zoomOffset: -1,
     accessToken: ACCESS_TOKEN
 }).addTo(map);
-
-// Añadimos el marcador a nuestra posición inicial
-L.marker(initialCoordinates).bindPopup("<b>Palma de Mallorca</b><br>Posición inicial del mapa").addTo(map);
-
 
 
 //LLAMADA A LA API DE TERREMOTOS
@@ -46,24 +42,45 @@ async function getEarthquakeFilter(starttime, endtime, minmagnitude) {
         const response = await fetch(FilterApi);
         const res = await response.json();
         const dataFilter = res.features;//retorna los terremotos de hoy + el faltrado por magnitud
-
+        
         return dataFilter //devulve el valor, no la variable) async lo envuelve en una promesa
     }
     catch (error) {
         console.error("Error al intentar", error);
         return []
-
+        
     };
-
+    
 };
-//getEarthquakeFilter("2026-01-01", "2026-01-31", 5).then(urlFecha => console.log(urlFecha))
 
+function getMagnitudeClass(mag) {
+    /*getMagnitudeClass(null) con mi código tal cual. me saldrá mag-micro,
+    porque al comparar null < 2 JavaScript convierte el null en 0, y 0 < 2 es verdad.
+    Un terremoto sin dato se pintaría como si fuera micro*/
+    if (mag == null) {// == comprueba tambien por undefined
+        return "mag-sin-dato"
+    }
+    else if(mag < 2) {
+        return "mag-micro";
+    }else if(mag < 4){
+        return "mag-menor";
+    }else if(mag < 5){
+        return "mag-ligero";
+    }else if(mag < 6){
+        return "mag-moderado";
+    }else{
+        return "mag-fuerte";
+    }
+}
+
+
+const loader = document.getElementById("loader")
 function paintEarthquake(datas, mapa) {
     try {
         datas.forEach(element => {
             const [longitud, latitud] = element.geometry.coordinates;
             const { code, mag, magType, place, time, title } = element.properties;
-
+            
             const popupContent = `<b>${title}</b><br>
             ${place}<br>
             ${new Date(time).toLocaleString()}<br>
@@ -71,8 +88,11 @@ function paintEarthquake(datas, mapa) {
             <b>Magnitud:</b> ${mag}<br>
             <b>Tipo de Magnitud:</b> ${magType}`;
 
-            L.marker([latitud, longitud]).bindPopup(popupContent).addTo(mapa);
+            L.circleMarker([latitud, longitud], {
+                className: getMagnitudeClass(mag)
+            }).bindPopup(popupContent).addTo(mapa);
         });
+        
     }
     catch (error) {
         console.log("error al intentar", error);
@@ -81,18 +101,19 @@ function paintEarthquake(datas, mapa) {
 
 };
 
-getEarthquakeToday().then(dataArr => paintEarthquake(dataArr, map));
+getEarthquakeToday().then(dataArr => {paintEarthquake(dataArr, map); loader.classList.add("oculto")});
+
+
 
 //...................................... MAPA 2 ..................................................................
 const form = document.getElementById("filter-form");
-const inputMagnitude = document.getElementById("magnitude")
-const outputMagnitud = document.getElementById("outputMagnitud")
+const inputMagnitude = document.getElementById("magnitude");
+const outputMagnitud = document.getElementById("outputMagnitud");
 
-const loader = document.getElementById("loader")
+const loader2 = document.getElementById("loader2");
 
 const mapId2 = 'map-filtered';
 const map2 = L.map(mapId2).setView(initialCoordinates, 1);
-console.log(map2);
 
 const earthquakesGroup = L.layerGroup().addTo(map2);
 
@@ -110,9 +131,9 @@ form.addEventListener("submit", e => {
     earthquakesGroup.clearLayers();
     const { magnitude, startDate, endDate } = form.elements;
 
-    loader.classList.remove("oculto")
+    loader2.classList.remove("oculto")
 
-    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => { paintEarthquake(dataArr, earthquakesGroup); loader.classList.add("oculto") })
+    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => { paintEarthquake(dataArr, earthquakesGroup); loader2.classList.add("oculto")})
 
 });
 
