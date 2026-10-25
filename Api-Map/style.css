@@ -7,3 +7,45 @@
 .oculto{
   display: none;
 }
+
+/*---------------------------------------- Colores Magnitudes --------------------------------------------------------------------------*/
+/* Nombres segun laclasificación real de magnitudes, la que usan los sismólogos*/
+
+:root {
+  --mag-micro: #fff3b0;
+  --mag-menor: #ffd166;
+  --mag-ligero: #ff9f1c;
+  --mag-moderado: #ff5a1f;
+  --mag-fuerte: #e0115f;
+  --mag-sin-dato: #8a8a8a;
+}
+
+/*Cuando creas un L.circleMarker, Leaflet dibuja ese círculo en SVG.
+por eso necesitamos otra propiedad y no background*/
+
+/*fill-opacity: si los círculos te salen muy transparentes,
+ esto lo arregla. Va de 0 (invisible) a 1 (opaco).*/
+.mag-micro {
+  fill: var(--mag-micro);
+  stroke: var(--mag-micro); /* el color del borde del círculo*/
+}
+.mag-menor {
+  fill: var(--mag-menor);
+  stroke: var(--mag-menor);
+}
+.mag-ligero {
+  fill: var(--mag-ligero);
+  stroke: var(--mag-ligero);
+}
+.mag-moderado {
+  fill: var(--mag-moderado);
+  stroke: var(--mag-moderado);
+}
+.mag-fuerte {
+  fill: var(--mag-fuerte);
+  stroke: var(--mag-fuerte); 
+}
+.mag-sin-dato {
+  fill: var(--mag-sin-dato);
+  stroke: var(--mag-sin-dato);
+}
