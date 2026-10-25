@@ -73,12 +73,14 @@ function getMagnitudeClass(mag) {
     }
 }
 
+
+const loader = document.getElementById("loader")
 function paintEarthquake(datas, mapa) {
     try {
         datas.forEach(element => {
             const [longitud, latitud] = element.geometry.coordinates;
             const { code, mag, magType, place, time, title } = element.properties;
-
+            
             const popupContent = `<b>${title}</b><br>
             ${place}<br>
             ${new Date(time).toLocaleString()}<br>
@@ -90,6 +92,7 @@ function paintEarthquake(datas, mapa) {
                 className: getMagnitudeClass(mag)
             }).bindPopup(popupContent).addTo(mapa);
         });
+        
     }
     catch (error) {
         console.log("error al intentar", error);
@@ -98,16 +101,16 @@ function paintEarthquake(datas, mapa) {
 
 };
 
-getEarthquakeToday().then(dataArr => paintEarthquake(dataArr, map));
+getEarthquakeToday().then(dataArr => {paintEarthquake(dataArr, map); loader.classList.add("oculto")});
 
 
 
 //...................................... MAPA 2 ..................................................................
 const form = document.getElementById("filter-form");
-const inputMagnitude = document.getElementById("magnitude")
-const outputMagnitud = document.getElementById("outputMagnitud")
+const inputMagnitude = document.getElementById("magnitude");
+const outputMagnitud = document.getElementById("outputMagnitud");
 
-const loader = document.getElementById("loader")
+const loader2 = document.getElementById("loader2");
 
 const mapId2 = 'map-filtered';
 const map2 = L.map(mapId2).setView(initialCoordinates, 1);
@@ -128,9 +131,9 @@ form.addEventListener("submit", e => {
     earthquakesGroup.clearLayers();
     const { magnitude, startDate, endDate } = form.elements;
 
-    loader.classList.remove("oculto")
+    loader2.classList.remove("oculto")
 
-    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => { paintEarthquake(dataArr, earthquakesGroup); loader.classList.add("oculto") })
+    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => { paintEarthquake(dataArr, earthquakesGroup); loader2.classList.add("oculto")})
 
 });
 
