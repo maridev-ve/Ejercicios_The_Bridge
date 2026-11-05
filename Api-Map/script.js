@@ -1,6 +1,6 @@
 const mapId = 'map';
 const initialCoordinates = [0.0, 0.0];
-const map = L.map(mapId).setView(initialCoordinates, 1);
+const map = L.map(mapId).setView(initialCoordinates, 2);
 
 const MAPBOX_API = 'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}'
 
@@ -13,7 +13,7 @@ const ACCESS_TOKEN =
 L.tileLayer(MAPBOX_API, {
     attribution: ATTRIBUTION,
     maxZoom: 13,
-    id: 'mapbox/streets-v11',
+    id: 'mapbox/satellite-streets-v12',
     tileSize: 512,
     zoomOffset: -1,
     accessToken: ACCESS_TOKEN
@@ -37,20 +37,19 @@ async function getEarthquakeToday() {
 }
 //LLAMADA A LA API FILTRADA
 async function getEarthquakeFilter(starttime, endtime, minmagnitude) {
-    const FilterApi = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${starttime}&endtime=${endtime}&minmagnitude=${minmagnitude}&limit=300&orderby=magnitude`
+    const FilterApi = `https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&starttime=${starttime}&endtime=${endtime}&minmagnitude=${minmagnitude}&limit=300`
     try {
         const response = await fetch(FilterApi);
         const res = await response.json();
         const dataFilter = res.features;//retorna los terremotos de hoy + el faltrado por magnitud
-        
+
         return dataFilter //devulve el valor, no la variable) async lo envuelve en una promesa
     }
     catch (error) {
         console.error("Error al intentar", error);
         return []
-        
     };
-    
+
 };
 
 function getMagnitudeClass(mag) {
@@ -60,15 +59,15 @@ function getMagnitudeClass(mag) {
     if (mag == null) {// == comprueba tambien por undefined
         return "mag-sin-dato"
     }
-    else if(mag < 2) {
+    else if (mag < 2) {
         return "mag-micro";
-    }else if(mag < 4){
+    } else if (mag < 4) {
         return "mag-menor";
-    }else if(mag < 5){
+    } else if (mag < 5) {
         return "mag-ligero";
-    }else if(mag < 6){
+    } else if (mag < 6) {
         return "mag-moderado";
-    }else{
+    } else {
         return "mag-fuerte";
     }
 }
@@ -80,7 +79,7 @@ function paintEarthquake(datas, mapa) {
         datas.forEach(element => {
             const [longitud, latitud] = element.geometry.coordinates;
             const { code, mag, magType, place, time, title } = element.properties;
-            
+
             const popupContent = `<b>${title}</b><br>
             ${place}<br>
             ${new Date(time).toLocaleString()}<br>
@@ -89,10 +88,11 @@ function paintEarthquake(datas, mapa) {
             <b>Tipo de Magnitud:</b> ${magType}`;
 
             L.circleMarker([latitud, longitud], {
-                className: getMagnitudeClass(mag)
+                className: getMagnitudeClass(mag),
+                radius: Math.max(mag, 1) * 3
             }).bindPopup(popupContent).addTo(mapa);
         });
-        
+
     }
     catch (error) {
         console.log("error al intentar", error);
@@ -101,7 +101,7 @@ function paintEarthquake(datas, mapa) {
 
 };
 
-getEarthquakeToday().then(dataArr => {paintEarthquake(dataArr, map); loader.classList.add("oculto")});
+getEarthquakeToday().then(dataArr => { paintEarthquake(dataArr, map); loader.classList.add("oculto") });
 
 
 
@@ -113,14 +113,14 @@ const outputMagnitud = document.getElementById("outputMagnitud");
 const loader2 = document.getElementById("loader2");
 
 const mapId2 = 'map-filtered';
-const map2 = L.map(mapId2).setView(initialCoordinates, 1);
+const map2 = L.map(mapId2).setView(initialCoordinates, 2);
 
 const earthquakesGroup = L.layerGroup().addTo(map2);
 
 L.tileLayer(MAPBOX_API, {
     attribution: ATTRIBUTION,
     maxZoom: 13,
-    id: 'mapbox/streets-v11',
+    id: 'mapbox/satellite-streets-v12',
     tileSize: 512,
     zoomOffset: -1,
     accessToken: ACCESS_TOKEN
@@ -131,9 +131,16 @@ form.addEventListener("submit", e => {
     earthquakesGroup.clearLayers();
     const { magnitude, startDate, endDate } = form.elements;
 
+    //Restar dos fechas te da la diferencia en milisegundos. Al dividir entre 1000*60*60*24 la pasas a días.
+    const dias = (new Date(endDate.value) - new Date(startDate.value)) / (1000 * 60 * 60 * 24);
+    if (dias > 30) {
+        alert("Elige un rango de 30 días como máximo");
+        return;
+    }
+    
     loader2.classList.remove("oculto")
 
-    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => { paintEarthquake(dataArr, earthquakesGroup); loader2.classList.add("oculto")})
+    getEarthquakeFilter(startDate.value, endDate.value, magnitude.value).then(dataArr => { paintEarthquake(dataArr, earthquakesGroup); loader2.classList.add("oculto") })
 
 });
 
