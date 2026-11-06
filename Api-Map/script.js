@@ -147,4 +147,3 @@ form.addEventListener("submit", e => {
 inputMagnitude.addEventListener("input", e => {
     outputMagnitud.textContent = inputMagnitude.value
 })
-
