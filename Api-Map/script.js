@@ -53,9 +53,6 @@ async function getEarthquakeFilter(starttime, endtime, minmagnitude) {
 };
 
 function getMagnitudeClass(mag) {
-    /*getMagnitudeClass(null) con mi código tal cual. me saldrá mag-micro,
-    porque al comparar null < 2 JavaScript convierte el null en 0, y 0 < 2 es verdad.
-    Un terremoto sin dato se pintaría como si fuera micro*/
     if (mag == null) {// == comprueba tambien por undefined
         return "mag-sin-dato"
     }
@@ -71,7 +68,6 @@ function getMagnitudeClass(mag) {
         return "mag-fuerte";
     }
 }
-
 
 const loader = document.getElementById("loader")
 function paintEarthquake(datas, mapa) {
